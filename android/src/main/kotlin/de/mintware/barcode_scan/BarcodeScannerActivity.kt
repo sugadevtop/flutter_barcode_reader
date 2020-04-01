@@ -9,12 +9,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import com.google.zxing.Result
 import de.mintware.barcodescan.R
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 
 
-class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
+class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
 
     lateinit var scannerView: ZXingScannerView
 
@@ -31,29 +32,30 @@ class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
         scannerView.setAutoFocus(true)
         // this paramter will make your HUAWEI phone works great!
         scannerView.setAspectTolerance(0.5f)
+        setSupportActionBar(findViewById(R.id.toolbar))
     }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        if (scannerView.flash) {
-            val item = menu.add(0,
-                    TOGGLE_FLASH, 0, "Flash Off")
-            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        } else {
-            val item = menu.add(0,
-                    TOGGLE_FLASH, 0, "Flash On")
-            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        }
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == TOGGLE_FLASH) {
-            scannerView.flash = !scannerView.flash
-            this.invalidateOptionsMenu()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-    }
+//
+//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+//        if (scannerView.flash) {
+//            val item = menu.add(0,
+//                    TOGGLE_FLASH, 0, "Flash Off")
+//            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+//        } else {
+//            val item = menu.add(0,
+//                    TOGGLE_FLASH, 0, "Flash On")
+//            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+//        }
+//        return super.onCreateOptionsMenu(menu)
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        if (item.itemId == TOGGLE_FLASH) {
+//            scannerView.flash = !scannerView.flash
+//            this.invalidateOptionsMenu()
+//            return true
+//        }
+//        return super.onOptionsItemSelected(item)
+//    }
 
     override fun onResume() {
         super.onResume()
