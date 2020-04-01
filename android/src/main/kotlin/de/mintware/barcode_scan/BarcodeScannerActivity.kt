@@ -10,12 +10,13 @@ import androidx.core.content.ContextCompat
 import android.view.Menu
 import android.view.MenuItem
 import com.google.zxing.Result
+import de.mintware.barcodescan.R
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 
 
 class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
 
-    lateinit var scannerView: me.dm7.barcodescanner.zxing.ZXingScannerView
+    lateinit var scannerView: ZXingScannerView
 
     companion object {
         val REQUEST_TAKE_PHOTO_CAMERA_PERMISSION = 100
@@ -25,12 +26,11 @@ class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        title = ""
-        scannerView = ZXingScannerView(this)
+        setContentView(R.layout.activity_scanner_layout)
+        scannerView = findViewById(R.id.scannerView)
         scannerView.setAutoFocus(true)
         // this paramter will make your HUAWEI phone works great!
         scannerView.setAspectTolerance(0.5f)
-        setContentView(scannerView)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
