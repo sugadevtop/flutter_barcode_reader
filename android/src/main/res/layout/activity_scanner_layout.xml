@@ -4,18 +4,17 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
         app:title="SCAN"
         app:titleTextColor="#333333"
-        android:paddingLeft="16dp"/>
+        android:layout_width="match_parent"
+        app:titleTextAppearance="@style/ActionBar.ToolbarTextTitleStyle"
+        android:layout_height="?android:actionBarSize"/>
 
     <me.dm7.barcodescanner.zxing.ZXingScannerView
         android:id="@+id/scannerView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_height="match_parent"/>
 
 </LinearLayout>
