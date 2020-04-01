@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +17,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView
 class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
 
     lateinit var scannerView: ZXingScannerView
+    lateinit var closeImageView: ImageView
 
     companion object {
         private const val REQUEST_TAKE_PHOTO_CAMERA_PERMISSION = 100
@@ -26,9 +28,17 @@ class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scanner_layout)
         scannerView = findViewById(R.id.scannerView)
+        closeImageView = findViewById(R.id.closeImageView)
         scannerView.setAutoFocus(true)
         // this paramter will make your HUAWEI phone works great!
         scannerView.setAspectTolerance(0.5f)
+        closeEvent()
+    }
+
+    private fun closeEvent() {
+        closeImageView.setOnClickListener{
+            finish()
+        }
     }
 
     override fun onResume() {
@@ -52,7 +62,7 @@ class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
         finish()
     }
 
-    fun finishWithError(errorCode: String) {
+    private fun finishWithError(errorCode: String) {
         val intent = Intent()
         intent.putExtra("ERROR_CODE", errorCode)
         setResult(Activity.RESULT_CANCELED, intent)
@@ -97,7 +107,7 @@ object PermissionUtil {
      */
     fun verifyPermissions(grantResults: IntArray): Boolean {
         // At least one result must be checked.
-        if (grantResults.size < 1) {
+        if (grantResults.isEmpty()) {
             return false
         }
 
