@@ -5,54 +5,40 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import android.view.Menu
-import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import com.google.zxing.Result
+import de.mintware.barcodescan.R
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 
 
-class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
+class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
 
-    lateinit var scannerView: me.dm7.barcodescanner.zxing.ZXingScannerView
+    lateinit var scannerView: ZXingScannerView
+    lateinit var closeImageView: ImageView
 
     companion object {
-        val REQUEST_TAKE_PHOTO_CAMERA_PERMISSION = 100
-        val TOGGLE_FLASH = 200
+        private const val REQUEST_TAKE_PHOTO_CAMERA_PERMISSION = 100
 
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        title = ""
-        scannerView = ZXingScannerView(this)
+        setContentView(R.layout.activity_scanner_layout)
+        scannerView = findViewById(R.id.scannerView)
+        closeImageView = findViewById(R.id.closeImageView)
         scannerView.setAutoFocus(true)
         // this paramter will make your HUAWEI phone works great!
         scannerView.setAspectTolerance(0.5f)
-        setContentView(scannerView)
+        closeEvent()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        if (scannerView.flash) {
-            val item = menu.add(0,
-                    TOGGLE_FLASH, 0, "Flash Off")
-            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        } else {
-            val item = menu.add(0,
-                    TOGGLE_FLASH, 0, "Flash On")
-            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+    private fun closeEvent() {
+        closeImageView.setOnClickListener{
+            finish()
         }
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == TOGGLE_FLASH) {
-            scannerView.flash = !scannerView.flash
-            this.invalidateOptionsMenu()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onResume() {
@@ -76,7 +62,7 @@ class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
         finish()
     }
 
-    fun finishWithError(errorCode: String) {
+    private fun finishWithError(errorCode: String) {
         val intent = Intent()
         intent.putExtra("ERROR_CODE", errorCode)
         setResult(Activity.RESULT_CANCELED, intent)
@@ -121,7 +107,7 @@ object PermissionUtil {
      */
     fun verifyPermissions(grantResults: IntArray): Boolean {
         // At least one result must be checked.
-        if (grantResults.size < 1) {
+        if (grantResults.isEmpty()) {
             return false
         }
 
