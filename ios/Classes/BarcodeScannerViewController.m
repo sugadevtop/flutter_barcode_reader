@@ -104,7 +104,7 @@
 
 - (void)setupNavigationBar {
     UINavigationBar *bar = [self.navigationController navigationBar];
-    [bar setTintColor: [UIColor whiteColor]];
+    [bar setTintColor: [UIColor blackColor]];
     [bar setBackgroundColor: [UIColor whiteColor]];
     self.title = @"SCAN";
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
