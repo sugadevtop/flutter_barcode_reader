@@ -106,7 +106,9 @@
     UINavigationBar *bar = [self.navigationController navigationBar];
     [bar setTintColor: [UIColor blackColor]];
     [bar setBackgroundColor: [UIColor whiteColor]];
-    self.title = @"SCAN";
+    [bar setTitleTextAttributes: @{NSForegroundColorAttributeName:[UIColor blueColor],
+                                       NSFontAttributeName: [UIFont boldSystemFontOfSize: 22]}];
+    self.title = @"Sentinel";
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
                                                  initWithBarButtonSystemItem:(UIBarButtonSystemItemStop)
                                                                       target:self
