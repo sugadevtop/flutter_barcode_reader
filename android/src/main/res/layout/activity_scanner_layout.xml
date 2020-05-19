@@ -27,7 +27,7 @@
                 android:textSize="22sp"
                 android:text="@string/app_name"
                 android:textStyle="bold"
-                android:textColor="#0D3DB4"
+                android:textColor="#FBAD1B"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"/>
         </LinearLayout>
