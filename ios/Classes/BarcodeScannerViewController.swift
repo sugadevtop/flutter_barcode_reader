@@ -73,12 +73,7 @@ class BarcodeScannerViewController: UIViewController {
                                   previewView: previewView
       )
     }
-    navigationItem.leftBarButtonItem = UIBarButtonItem(title: config.strings["cancel"],
-                                                        style: .plain,
-                                                        target: self,
-                                                        action: #selector(cancel)
-    )
-    updateToggleFlashButton()
+    setupNavigationBar()
   }
   
   override func viewDidAppear(_ animated: Bool) {
@@ -104,10 +99,6 @@ class BarcodeScannerViewController: UIViewController {
     scanner?.stopScanning()
     scanRect?.stopAnimating()
     
-    if isFlashOn {
-      setFlashState(false)
-    }
-    
     super.viewWillDisappear(animated)
   }
   
@@ -131,9 +122,25 @@ class BarcodeScannerViewController: UIViewController {
       scanRect.startAnimating()
     }
   }
+
+  private func setupNavigationBar() {
+    self.navigationController?.navigationBar.isTranslucent = false
+    self.navigationController?.navigationBar.backgroundColor = .white
+    self.navigationController?.navigationBar.tintColor = .black
+    self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 22), NSAttributedString.Key.foregroundColor: UIColor(red: 251/255, green: 173/255, blue: 27/255, alpha: 1.0)]
+    self.title = "Sentinel"
+    self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action:  #selector(cancel))
+  }
   
   private func startScan() {
     do {
+        if let scanRect = scanRect?.calculateScanRect() {
+            scanner?.didStartScanningBlock = {
+                self.scanner?.scanRect = scanRect
+            }
+        }
+      
+
       try scanner!.startScanning(with: cameraFromConfig, resultBlock: { codes in
         if let code = codes?.first {
           let codeType = self.formatMap.first(where: { $0.value == code.type });
@@ -147,11 +154,6 @@ class BarcodeScannerViewController: UIViewController {
           self.scanResult(scanResult)
         }
       })
-      if(config.autoEnableFlash){
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-          self.setFlashState(true)
-        }
-      }
     } catch {
       self.scanResult(ScanResult.with {
         $0.type = .error
@@ -166,43 +168,6 @@ class BarcodeScannerViewController: UIViewController {
       $0.type = .cancelled
       $0.format = .unknown
     });
-  }
-  
-  @objc private func onToggleFlash() {
-    setFlashState(!isFlashOn)
-  }
-  
-  private func updateToggleFlashButton() {
-    if !hasTorch {
-      return
-    }
-    
-    let buttonText = isFlashOn ? config.strings["flash_off"] : config.strings["flash_on"]
-    navigationItem.rightBarButtonItem = UIBarButtonItem(title: buttonText,
-                                                        style: .plain,
-                                                        target: self,
-                                                        action: #selector(onToggleFlash)
-    )
-  }
-  
-  private func setFlashState(_ on: Bool) {
-    if let device = device {
-      guard device.hasFlash && device.hasTorch else {
-        return
-      }
-      
-      do {
-        try device.lockForConfiguration()
-      } catch {
-        return
-      }
-      
-      device.flashMode = on ? .on : .off
-      device.torchMode = on ? .on : .off
-      
-      device.unlockForConfiguration()
-      updateToggleFlashButton()
-    }
   }
   
   private func errorResult(errorCode: String){

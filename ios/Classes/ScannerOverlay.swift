@@ -101,7 +101,7 @@ class ScannerOverlay: UIView {
         layer.removeAnimation(forKey: "flashAnimation")
     }
     
-    private func calculateScanRect() -> CGRect {
+    func calculateScanRect() -> CGRect {
         let rect = frame
         
         let frameWidth = rect.size.width

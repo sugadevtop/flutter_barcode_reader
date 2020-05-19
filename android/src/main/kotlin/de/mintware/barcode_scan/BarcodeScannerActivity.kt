@@ -8,6 +8,7 @@ import android.view.MenuItem
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.Result
 import me.dm7.barcodescanner.zxing.ZXingScannerView
+import android.widget.ImageView
 
 class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
 
@@ -16,11 +17,10 @@ class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
     }
 
     private lateinit var config: Protos.Configuration
-    private var scannerView: ZXingScannerView? = null
+    lateinit var scannerView: ZXingScannerView
+    lateinit var closeImageView: ImageView
 
     companion object {
-        const val TOGGLE_FLASH = 200
-        const val CANCEL = 300
         const val EXTRA_CONFIG = "config"
         const val EXTRA_RESULT = "scan_result"
         const val EXTRA_ERROR_CODE = "error_code"
@@ -44,60 +44,29 @@ class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
     // region Activity lifecycle
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+		setContentView(R.layout.activity_scanner_layout)
+        scannerView = findViewById(R.id.scannerView)
+        closeImageView = findViewById(R.id.closeImageView)
         config = Protos.Configuration.parseFrom(intent.extras!!.getByteArray(EXTRA_CONFIG))
+        setupScannerView()
+        closeEvent()
     }
 
     private fun setupScannerView() {
-        if (scannerView != null) {
-            return
+        scannerView.setAutoFocus(config.android.useAutoFocus)
+    	val restrictedFormats = mapRestrictedBarcodeTypes()
+        if (restrictedFormats.isNotEmpty()) {
+            scannerView.setFormats(restrictedFormats)
         }
 
-        scannerView = ZXingAutofocusScannerView(this).apply {
-            setAutoFocus(config.android.useAutoFocus)
-            val restrictedFormats = mapRestrictedBarcodeTypes()
-            if (restrictedFormats.isNotEmpty()) {
-                setFormats(restrictedFormats)
-            }
-
-            // this parameter will make your HUAWEI phone works great!
-            setAspectTolerance(config.android.aspectTolerance.toFloat())
-            if (config.autoEnableFlash) {
-                flash = config.autoEnableFlash
-                invalidateOptionsMenu()
-            }
-        }
-
-        setContentView(scannerView)
+        // this parameter will make your HUAWEI phone works great!
+        scannerView.setAspectTolerance(config.android.aspectTolerance.toFloat())
     }
 
-    // region AppBar menu
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        var buttonText = config.stringsMap["flash_on"]
-        if (scannerView?.flash == true) {
-            buttonText = config.stringsMap["flash_off"]
-        }
-        val flashButton = menu.add(0, TOGGLE_FLASH, 0, buttonText)
-        flashButton.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-
-        val cancelButton = menu.add(0, CANCEL, 0, config.stringsMap["cancel"])
-        cancelButton.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == TOGGLE_FLASH) {
-            scannerView?.toggleFlash()
-            this.invalidateOptionsMenu()
-            return true
-        }
-        if (item.itemId == CANCEL) {
-            setResult(RESULT_CANCELED)
+    private fun closeEvent() {
+        closeImageView.setOnClickListener{
             finish()
-            return true
         }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onPause() {
@@ -107,13 +76,8 @@ class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
 
     override fun onResume() {
         super.onResume()
-        setupScannerView()
         scannerView?.setResultHandler(this)
-        if (config.useCamera > -1) {
-            scannerView?.startCamera(config.useCamera)
-        } else {
-            scannerView?.startCamera()
-        }
+        scannerView?.startCamera()
     }
     // endregion
 
