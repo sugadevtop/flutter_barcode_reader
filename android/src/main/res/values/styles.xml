@@ -3,7 +3,7 @@
 
     <style name="ActionBar.ToolbarTextTitleStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textSize">18sp</item>
-        <item name="android:textColor">#333333</item>
+        <item name="android:textColor">#FBAD1B</item>
         <item name="fontFamily">@font/ubuntu</item>
         <item name="android:fontFamily">@font/ubuntu</item>
         <item name="android:textStyle">normal</item>

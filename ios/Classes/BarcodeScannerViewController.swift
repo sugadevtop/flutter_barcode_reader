@@ -128,7 +128,7 @@ class BarcodeScannerViewController: UIViewController {
     self.navigationController?.navigationBar.backgroundColor = .white
     self.navigationController?.navigationBar.tintColor = .black
     self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 22), NSAttributedString.Key.foregroundColor: UIColor(red: 251/255, green: 173/255, blue: 27/255, alpha: 1.0)]
-    self.title = "Sentinel"
+    self.title = "SantaPocket Agent"
     self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action:  #selector(cancel))
   }
   
